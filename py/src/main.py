@@ -1,4 +1,5 @@
 import url
+from pathlib import Path
 
 def show(body):
     in_tag = False
@@ -16,4 +17,8 @@ def load(url: url.URL):
     
 if __name__ == "__main__":
     import sys
-    load(url.URL(sys.argv[1]))
+    if len(sys.argv) > 1:
+        load(url.URL(sys.argv[1]))
+    else:
+        # Load UA/index.html in this directory (use pathlib to calculate path) using the file:// scheme
+        load(url.URL(f'file:///{Path(__file__).parent}/UA/index.html'))
