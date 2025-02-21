@@ -1,15 +1,24 @@
 import socket
+import ssl
 
 class URL:
     def __init__(self, url):
         self.scheme, url = url.split('://', 1)
-        assert self.scheme == 'http'
+        assert self.scheme in ['http', 'https']
         
         if '/' not in url:
             url = url + '/'
         
         self.host, url = url.split('/', 1)
         self.path = '/' + url
+        
+        if ":" in self.host:
+            self.host, port = self.host.split(':', 1)
+            self.port = int(port)
+        elif self.scheme == 'https':
+            self.port = 443
+        elif self.scheme == 'http':
+            self.port = 80
         
     def request(self):
         s = socket.socket(
@@ -18,8 +27,10 @@ class URL:
             proto=socket.IPPROTO_TCP
         )
         
-        s.connect((self.host, 80))
+        s.connect((self.host, self.port))
         
+        if self.scheme == 'https':
+            s = ssl.create_default_context().wrap_socket(s, server_hostname=self.host)
         
         req = "GET {} HTTP/1.0\r\n".format(self.path)
         req += "Host: {}\r\n".format(self.host)
