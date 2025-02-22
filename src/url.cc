@@ -69,7 +69,15 @@ std::optional<std::string> URL::request() const {
     std::cerr << "Error in recv()" << std::endl;
   }
 
-  
+  // strip response headers from response
+
+  size_t header_end = response.find("\r\n\r\n");
+  if (header_end != std::string::npos) {
+    response = response.substr(header_end + 4);
+  } else {
+    std::cerr << "Failed to find end of headers" << std::endl;
+    return std::optional<std::string>();
+  }
 
   close(sock);
 
