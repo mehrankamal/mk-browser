@@ -1,18 +1,23 @@
 #pragma once
 
+#include <string>
+namespace MK {
 class URL {
 public:
-    URL(char* const);
+  static URL create(std::string const scheme, std::string const host,
+                    std::string const path);
 
-    void request();
+  std::optional<std::string> request() const;
 
-    char *const scheme(){ return m_scheme; };
-    char *const host(){ return m_host; };
-    char *const path(){ return m_path; };
+  std::string const &scheme() const { return m_scheme; };
+  std::string const &host() const { return m_host; };
+  std::string const &path() const { return m_path; };
 
-    ~URL();
 private:
-    char* m_scheme;
-    char* m_host;
-    char* m_path;
+  URL(std::string const, std::string const, std::string const);
+
+  std::string m_scheme;
+  std::string m_host;
+  std::string m_path;
 };
+} // namespace MK
