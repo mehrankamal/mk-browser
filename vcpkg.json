@@ -1,0 +1,12 @@
+{
+  "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg-tool/main/docs/vcpkg.schema.json",
+  "name": "mkbrowser",
+  "version": "0.1.0",
+  "dependencies": [
+    {
+      "name": "raylib",
+      "version>=": "5.5"
+    }
+  ],
+  "builtin-baseline": "5f8c424e267b7360d451df406eeefb3767985b17"
+}
