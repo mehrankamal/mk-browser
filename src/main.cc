@@ -9,16 +9,17 @@ int main(int argc, char **argv) {
     MK::UrlParser url_parser = MK::UrlParser(argv[1]);
     auto maybe_url = url_parser.parse();
 
+    MK::Browser browser;
+
     if (maybe_url.has_value()) {
-      MK::load(maybe_url.value());
+      browser.load(maybe_url.value());
+      browser.run();
     } else {
       std::cerr << "Error parsing URL" << std::endl;
     }
   } else {
     std::cerr << "Exected URL, none found" << std::endl;
   }
-
-  MK::Browser browser;
 
   return 0;
 }

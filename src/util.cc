@@ -1,9 +1,12 @@
 #include <iostream>
+#include <sstream>
+#include <string_view>
 
 #include "Url.hh"
 
 namespace MK {
-void show(std::string const body) {
+std::string lex(std::string const body) {
+  std::stringstream text_contetnt;
   auto in_tag = false;
   for (auto const c : body) {
     if (c == '<')
@@ -11,15 +14,10 @@ void show(std::string const body) {
     else if (c == '>')
       in_tag = false;
     else if (!in_tag)
-      std::cout << c;
+      text_contetnt << c;
   }
+
+  return text_contetnt.str();
 }
 
-void load(MK::URL const &url) {
-  auto maybe_body = url.request();
-  if (maybe_body.has_value())
-    show(maybe_body.value());
-  else
-    std::cerr << "Error in getting request content" << std::endl;
-}
 } // namespace MK
