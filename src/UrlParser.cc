@@ -2,8 +2,7 @@
 #include <cstring>
 #include <optional>
 
-#include "forward.h"
-#include "url-parser.h"
+#include "UrlParser.hh"
 
 namespace MK {
 UrlParser::UrlParser(char *const url_str) {
@@ -38,8 +37,6 @@ std::optional<URL> UrlParser::parse() {
         host = host_start;
         path = "/";
     }
-
-
 
     return URL::create(scheme, host, path);
 }

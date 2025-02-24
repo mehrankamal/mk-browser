@@ -18,9 +18,9 @@ include_directories(${raylib_INCLUDE_DIRS})
 
 add_executable(MKBrowser
     src/main.cc
-    src/url-parser.cc
-    src/url.cc
-    src/util.cc
+    src/UrlParser.cc
+    src/Url.cc
+    src/Util.cc
 )
 
 target_link_libraries(MKBrowser PRIVATE raylib glfw)

@@ -21,12 +21,12 @@
 
 #include <raylib.h>
 
-int screenWidth = 800;
-int screenHeight = 450;
+#define WIDTH 800u
+#define HEIGHT 600u
 
 void UpdateDrawFrame(void);
 int main() {
-  InitWindow(screenWidth, screenHeight, "raylib [core] example - basic window");
+  InitWindow(WIDTH, HEIGHT, "MK Browser");
 
   SetTargetFPS(60);
   while (!WindowShouldClose()) {
@@ -37,12 +37,14 @@ int main() {
 
   return 0;
 }
+
 void UpdateDrawFrame(void) {
   BeginDrawing();
 
   ClearBackground(RAYWHITE);
 
   DrawText("Congrats! You created your first window!", 190, 200, 20, LIGHTGRAY);
+  DrawRectangle(0, 0, 100, 100, BLACK);
 
   EndDrawing();
 }

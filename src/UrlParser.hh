@@ -1,7 +1,7 @@
 #include <sys/types.h>
 
-#include "forward.h"
-#include "url.h"
+#include "Forward.hh"
+#include "Url.hh"
 
 namespace MK {
 class UrlParser {
