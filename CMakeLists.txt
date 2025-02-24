@@ -21,6 +21,7 @@ add_executable(MKBrowser
     src/UrlParser.cc
     src/Url.cc
     src/Util.cc
+    src/Browser.cc
 )
 
 target_link_libraries(MKBrowser PRIVATE raylib glfw)
