@@ -8,17 +8,18 @@
 #include <sys/socket.h>
 #include <unistd.h>
 
+#include "Forward.hh"
 #include "Url.hh"
 
 namespace MK {
 
-URL::URL(std::string const scheme, std::string const host,
+URL::URL(std::string const scheme, std::string const host, u32 const port,
          std::string const path)
-    : m_scheme(scheme), m_host(host), m_path(path) {}
+    : m_scheme(scheme), m_host(host), m_port(port), m_path(path) {}
 
-URL URL::create(std::string const scheme, std::string const host,
+URL URL::create(std::string const scheme, std::string const host, u32 port,
                 std::string const path) {
-  return URL(scheme, host, path);
+  return URL(scheme, host, port, path);
 }
 
 std::optional<std::string> URL::request() const {
@@ -39,7 +40,7 @@ std::optional<std::string> URL::request() const {
 
   struct sockaddr_in hint;
   hint.sin_family = AF_INET;
-  hint.sin_port = htons(80);
+  hint.sin_port = htons(m_port);
   hint.sin_addr.s_addr = INADDR_ANY;
   memcpy(&hint.sin_addr.s_addr, server->h_addr, server->h_length);
 
