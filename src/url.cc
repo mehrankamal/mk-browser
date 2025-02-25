@@ -4,6 +4,9 @@
 #include <iostream>
 #include <netdb.h>
 #include <netinet/in.h>
+#include <openssl/err.h>
+#include <openssl/ssl.h>
+#include <optional>
 #include <string>
 #include <sys/socket.h>
 #include <unistd.h>
@@ -12,6 +15,17 @@
 #include "Url.hh"
 
 namespace MK {
+
+std::optional<std::string> strip_headers(std::string const &response) {
+  size_t header_end = response.find("\r\n\r\n");
+
+  if (header_end != std::string::npos) {
+    return response.substr(header_end + 4);
+  } else {
+    std::cerr << "Failed to find end of headers" << std::endl;
+    return nullptr;
+  }
+}
 
 URL::URL(std::string const scheme, std::string const host, u32 const port,
          std::string const path)
@@ -22,7 +36,7 @@ URL URL::create(std::string const scheme, std::string const host, u32 port,
   return URL(scheme, host, port, path);
 }
 
-std::optional<std::string> URL::request() const {
+std::optional<std::string> URL::request_http() const {
   auto sock = socket(AF_INET, SOCK_STREAM, 0);
 
   if (sock == -1) {
@@ -71,18 +85,82 @@ std::optional<std::string> URL::request() const {
     std::cerr << "Error in recv()" << std::endl;
   }
 
-  // strip response headers from response
-
-  size_t header_end = response.find("\r\n\r\n");
-  if (header_end != std::string::npos) {
-    response = response.substr(header_end + 4);
-  } else {
-    std::cerr << "Failed to find end of headers" << std::endl;
-    return std::optional<std::string>();
-  }
-
   close(sock);
 
-  return response;
+  return strip_headers(response);
+}
+
+std::optional<std::string> URL::request_https() const {
+  SSL_library_init();
+  SSL_load_error_strings();
+  OpenSSL_add_all_algorithms();
+
+  std::unique_ptr<SSL_CTX, decltype(&SSL_CTX_free)> ctx(
+      SSL_CTX_new(TLS_client_method()), SSL_CTX_free);
+  if (!ctx)
+    return std::nullopt;
+
+  SSL_CTX_set_verify(ctx.get(), SSL_VERIFY_PEER, nullptr);
+  SSL_CTX_set_default_verify_paths(ctx.get());
+
+  std::unique_ptr<BIO, decltype(&BIO_free_all)> bio(
+      BIO_new_ssl_connect(ctx.get()), BIO_free_all);
+  if (!bio)
+    return std::nullopt;
+
+  const std::string host_port = m_host + ":" + std::to_string(m_port);
+  BIO_set_conn_hostname(bio.get(), host_port.c_str());
+
+  SSL *ssl = nullptr;
+  BIO_get_ssl(bio.get(), &ssl);
+  if (!ssl)
+    return std::nullopt;
+
+  SSL_set_tlsext_host_name(ssl, m_host.c_str());
+
+  if (BIO_do_connect(bio.get()) <= 0) {
+    ERR_print_errors_fp(stderr);
+    return std::nullopt;
+  }
+
+  if (SSL_get_verify_result(ssl) != X509_V_OK) {
+    return std::nullopt;
+  }
+
+  const std::string request = "GET " + m_path +
+                              " HTTP/1.1\r\n"
+                              "Host: " +
+                              m_host +
+                              "\r\n"
+                              "Connection: close\r\n\r\n";
+
+  if (BIO_write(bio.get(), request.data(), request.size()) <= 0) {
+    return std::nullopt;
+  }
+
+  std::string response;
+  char buffer[4096];
+  int bytes_read = 0;
+
+  while ((bytes_read = BIO_read(bio.get(), buffer, sizeof(buffer))) > 0) {
+    response.append(buffer, bytes_read);
+  }
+
+  if (bytes_read < 0) {
+    return std::nullopt;
+  }
+
+  return strip_headers(response);
+}
+
+std::optional<std::string> URL::request() const {
+  if (m_scheme == "http") {
+    return request_http();
+  } else if (m_scheme == "https") {
+    return request_https();
+  } else {
+    std::cerr << "Unsupported scheme " << m_scheme << std::endl;
+    return std::optional<std::string>();
+  }
 }
 } // namespace MK

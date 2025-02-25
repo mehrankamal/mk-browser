@@ -1,5 +1,6 @@
 #pragma once
 
+#include <optional>
 #include <string>
 
 #include "Forward.hh"
@@ -17,6 +18,8 @@ public:
 
 private:
   URL(std::string const, std::string const, u32 const, std::string const);
+  std::optional<std::string> request_http() const;
+  std::optional<std::string> request_https() const;
 
   std::string m_scheme;
   std::string m_host;

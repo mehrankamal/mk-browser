@@ -9,10 +9,9 @@ if(NOT DEFINED CMAKE_TOOLCHAIN_FILE)
     message(WARNING "Consider setting CMAKE_TOOLCHAIN_FILE to your vcpkg toolchain file for dependency management!")
 endif()
 
-# Find raylib package
 find_package(raylib CONFIG REQUIRED)
 find_package(glfw3 CONFIG REQUIRED)
-
+find_package(OpenSSL REQUIRED)
 
 include_directories(${raylib_INCLUDE_DIRS})
 
@@ -24,7 +23,7 @@ add_executable(MKBrowser
     src/Browser.cc
 )
 
-target_link_libraries(MKBrowser PRIVATE raylib glfw)
+target_link_libraries(MKBrowser PRIVATE raylib glfw OpenSSL::SSL OpenSSL::Crypto)
 
 # Platform-specific linking for raylib
 if(APPLE)

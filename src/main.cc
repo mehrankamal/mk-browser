@@ -23,11 +23,3 @@ int main(int argc, char **argv) {
 
   return 0;
 }
-
-// #include "Browser.hh"
-
-// int main(int argc, char **argv) {
-//   MK::Browser browser = MK::Browser();
-
-//   return 0;
-// }
