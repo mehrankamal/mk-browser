@@ -19,7 +19,8 @@ void Browser::load(URL const &url) {
   std::cerr << "Body text: \n" << m_text_content << std::endl;
 }
 
-void Browser::run() const {
+void Browser::run() {
+  m_font = LoadFont("resources/fonts/SF-Pro-Text-Regular.ttf");
   while (!WindowShouldClose()) {
     update_draw_frame();
   }
@@ -33,7 +34,7 @@ void Browser::update_draw_frame() const {
 
   ClearBackground(RAYWHITE);
 
-  DrawText(m_text_content.c_str(), 10, 10, 12, BLACK);
+  DrawTextEx(m_font, m_text_content.c_str(), {10, 10}, 12, 2, BLACK);
 
   EndDrawing();
 }
