@@ -10,6 +10,7 @@
 
 #define HSTEP 13u
 #define VSTEP 18u
+#define SCROLL_STEP 100u
 
 namespace MK {
 Browser::Browser() {
@@ -65,6 +66,12 @@ void Browser::compute_layout(std::string const &text_content) {
 
 void Browser::draw_layout() const {
   for (auto const &layout_text : m_display_list) {
+    bool is_offscreen_content = layout_text.position.y + VSTEP < m_scroll ||
+                                layout_text.position.y > m_scroll + HEIGHT;
+
+    if (is_offscreen_content)
+      continue;
+
     DrawTextEx(m_font, layout_text.character.c_str(),
                Vector2Add(layout_text.position, {0, -m_scroll}), 13, 0, BLACK);
   }
@@ -81,11 +88,11 @@ void Browser::run() {
 
 void Browser::update_state() {
   if (IsKeyDown(KEY_DOWN)) {
-    m_scroll += 1;
+    m_scroll += SCROLL_STEP;
   }
 
   if (IsKeyDown(KEY_UP)) {
-    m_scroll -= 1;
+    m_scroll -= SCROLL_STEP;
   }
 }
 
