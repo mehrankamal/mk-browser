@@ -1,6 +1,8 @@
 #include <iostream>
+#include <string>
 
 #include "raylib.h"
+#include "raymath.h"
 
 #include "Browser.hh"
 #include "Forward.hh"
@@ -19,32 +21,14 @@ Browser::Browser() {
 void Browser::load(URL const &url) {
   auto maybe_body = url.request();
   m_text_content = lex(maybe_body.value_or(""));
+  compute_layout(m_text_content);
 }
 
-void Browser::run() {
-  m_font = LoadFont("resources/fonts/SF-Pro-Text-Regular.ttf");
-  while (!WindowShouldClose()) {
-    update_draw_frame();
-  }
-
-  close_window();
-}
-
-void Browser::update_draw_frame() const {
-
-  BeginDrawing();
-
-  ClearBackground(RAYWHITE);
-
+void Browser::compute_layout(std::string const &text_content) {
   auto cursor_x = HSTEP;
   auto cursor_y = VSTEP;
-  auto c_str = m_text_content.c_str();
+  auto c_str = text_content.c_str();
   auto start_c_str = 0;
-
-  // TODO: Fix this, dont skip initial spaces, newlines and tabs
-  while (c_str[start_c_str] == '\n' || c_str[start_c_str] == '\t' ||
-         c_str[start_c_str] == ' ')
-    start_c_str += 1;
 
   while (c_str[start_c_str] != '\0') {
     if (c_str[start_c_str] == '\n') {
@@ -59,9 +43,13 @@ void Browser::update_draw_frame() const {
     strncpy(current_char, c_str + start_c_str, 1);
     current_char[1] = '\0';
 
-    DrawTextEx(m_font, current_char,
-               {static_cast<float>(cursor_x), static_cast<float>(cursor_y)}, 16,
-               1.0, BLACK);
+    LayoutText layout_text = {
+        .position = {static_cast<float>(cursor_x),
+                     static_cast<float>(cursor_y)},
+        .character = std::string(current_char),
+    };
+
+    m_display_list.push_back(layout_text);
 
     cursor_x += HSTEP;
     start_c_str += 1;
@@ -73,6 +61,42 @@ void Browser::update_draw_frame() const {
 
     free(current_char);
   }
+}
+
+void Browser::draw_layout() const {
+  for (auto const &layout_text : m_display_list) {
+    DrawTextEx(m_font, layout_text.character.c_str(),
+               Vector2Add(layout_text.position, {0, -m_scroll}), 13, 0, BLACK);
+  }
+}
+
+void Browser::run() {
+  m_font = LoadFont("resources/fonts/SF-Pro-Text-Regular.ttf");
+  while (!WindowShouldClose()) {
+    update_draw_frame();
+  }
+
+  close_window();
+}
+
+void Browser::update_state() {
+  if (IsKeyDown(KEY_DOWN)) {
+    m_scroll += 1;
+  }
+
+  if (IsKeyDown(KEY_UP)) {
+    m_scroll -= 1;
+  }
+}
+
+void Browser::update_draw_frame() {
+  update_state();
+
+  BeginDrawing();
+
+  ClearBackground(RAYWHITE);
+
+  draw_layout();
 
   EndDrawing();
 }
