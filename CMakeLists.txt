@@ -15,19 +15,24 @@ find_package(OpenSSL REQUIRED)
 
 include_directories(${raylib_INCLUDE_DIRS})
 
-add_executable(MKBrowser
-    src/main.cc
-    src/UrlParser.cc
-    src/Url.cc
-    src/Util.cc
-    src/Browser.cc
+add_executable(mk-browser
+    Applications/Browser/main.cc
+    Libraries/LibBrowser/UrlParser.cc
+    Libraries/LibBrowser/Url.cc
+    Libraries/LibBrowser/Util.cc
+    Libraries/LibBrowser/Browser.cc
 )
 
-target_link_libraries(MKBrowser PRIVATE raylib glfw OpenSSL::SSL OpenSSL::Crypto)
+target_link_libraries(mk-browser PRIVATE
+    raylib
+    glfw
+    OpenSSL::SSL
+    OpenSSL::Crypto
+)
 
 # Platform-specific linking for raylib
 if(APPLE)
-    target_link_libraries(MKBrowser PRIVATE
+    target_link_libraries(mk-browser PRIVATE
         "-framework Cocoa"
         "-framework OpenGL"
         "-framework IOKit"

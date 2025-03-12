@@ -1,8 +1,8 @@
 #include <iostream>
 
-#include "Browser.hh"
-#include "UrlParser.hh"
-#include "Util.hh"
+#include "../../Libraries/LibBrowser/Browser.hh"
+#include "../../Libraries/LibBrowser/UrlParser.hh"
+#include "../../Libraries/LibBrowser/Util.hh"
 
 int main(int argc, char **argv) {
   if (argc > 1) {
