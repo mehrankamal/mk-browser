@@ -1,8 +1,8 @@
 #include <iostream>
 #include <string>
 
-#include "raylib.h"
-#include "raymath.h"
+#include <raylib.h>
+#include <raymath.h>
 
 #include "Browser.hh"
 #include "Forward.hh"
