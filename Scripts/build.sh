@@ -15,8 +15,5 @@ mkdir -p "$BUILD_DIRECTORY"
 
 ensure_vcpkg_installation
 
-cmake -B "$BUILD_DIRECTORY" -S . -G Ninja \
-    -DCMAKE_TOOLCHAIN_FILE="$VCPKG_DIR/scripts/buildsystems/vcpkg.cmake" \
-    -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
-
-cmake --build "$BUILD_DIRECTORY"
+cmake -S . --preset Debug
+cmake --build --preset Debug

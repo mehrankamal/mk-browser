@@ -16,11 +16,4 @@ find_package(OpenSSL REQUIRED)
 include_directories(${raylib_INCLUDE_DIRS})
 
 add_subdirectory(Libraries/LibBrowser)
-
-add_executable(mk-browser
-    Applications/Browser/main.cc
-)
-
-target_link_libraries(mk-browser PRIVATE
-    LibBrowser
-)
+add_subdirectory(Applications/Browser)
