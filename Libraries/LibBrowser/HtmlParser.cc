@@ -1,15 +1,20 @@
-#include <iostream>
 #include <sstream>
-#include <string_view>
+#include <string>
 
-#include "Url.hh"
+#include "HtmlParser.hh"
 
 namespace MK {
-std::string lex(std::string const body)
+
+HtmlParser::HtmlParser(std::string const text)
+    : m_text(text)
+{
+}
+
+std::string HtmlParser::lex()
 {
     std::stringstream text_contetnt;
     auto in_tag = false;
-    for (auto const c : body) {
+    for (auto const c : m_text) {
         if (c == '<')
             in_tag = true;
         else if (c == '>')
@@ -21,4 +26,4 @@ std::string lex(std::string const body)
     return text_contetnt.str();
 }
 
-} // namespace MK
+}

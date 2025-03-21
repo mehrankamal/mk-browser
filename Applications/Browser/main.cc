@@ -2,7 +2,6 @@
 
 #include <Browser.hh>
 #include <UrlParser.hh>
-#include <Util.hh>
 
 int main(int argc, char** argv)
 {

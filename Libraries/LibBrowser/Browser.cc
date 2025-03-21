@@ -7,7 +7,7 @@
 
 #include "Browser.hh"
 #include "Forward.hh"
-#include "Util.hh"
+#include "HtmlParser.hh"
 
 #define HSTEP 13.0f
 #define VSTEP 18.0f
@@ -24,7 +24,8 @@ Browser::Browser()
 void Browser::load(URL const& url)
 {
     auto maybe_body = url.request();
-    m_text_content = lex(maybe_body.value_or(""));
+    m_html_parser = new HtmlParser(maybe_body.value_or(""));
+    m_text_content = html_parser().lex();
     compute_layout(m_text_content);
 }
 
@@ -73,7 +74,7 @@ void Browser::compute_layout(std::string const& text_content)
 
         if (cursor_x + width >= WIDTH - HSTEP) {
             cursor_x = HSTEP;
-            // cursor_y += (m_font.baseSize + m_font.glyphPadding) * 1.25;
+            cursor_y += (m_font.baseSize + m_font.glyphPadding) * 1.25;
         }
     }
 }

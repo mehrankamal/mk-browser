@@ -1,7 +1,7 @@
 add_library(LibBrowser STATIC
     UrlParser.cc
+    HtmlParser.cc
     Url.cc
-    Util.cc
     Browser.cc
 )
 
