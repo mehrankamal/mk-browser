@@ -6,5 +6,5 @@
 
 namespace MK {
 std::string lex(std::string const);
-void load(URL const &);
+void load(URL const&);
 } // namespace MK

@@ -8,12 +8,12 @@
 namespace MK {
 class UrlParser {
 public:
-  UrlParser(char *const url_str);
-  std::optional<URL> parse();
+    UrlParser(char* const url_str);
+    std::optional<URL> parse();
 
 private:
-  u32 m_start;
-  u32 m_current;
-  char *m_url_str;
+    u32 m_start;
+    u32 m_current;
+    char* m_url_str;
 };
 } // namespace MK
