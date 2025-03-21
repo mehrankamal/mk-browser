@@ -30,39 +30,27 @@ void Browser::compute_layout(std::string const& text_content)
 {
     auto cursor_x = HSTEP;
     auto cursor_y = VSTEP;
-    auto c_str = text_content.c_str();
-    auto start_c_str = 0;
 
-    while (c_str[start_c_str] != '\0') {
-        if (c_str[start_c_str] == '\n') {
+    for (size_t i = 0; i < text_content.length(); ++i) {
+        if (text_content[i] == '\n') {
             cursor_x = HSTEP;
             cursor_y += VSTEP;
-            start_c_str += 1;
             continue;
         }
-
-        auto current_char = (char*)malloc(2);
-
-        strncpy(current_char, c_str + start_c_str, 1);
-        current_char[1] = '\0';
 
         LayoutText layout_text = {
             .position
             = { static_cast<float>(cursor_x), static_cast<float>(cursor_y) },
-            .character = std::string(current_char),
+            .character = std::string(1, text_content[i]),
         };
 
         m_display_list.push_back(layout_text);
-
         cursor_x += HSTEP;
-        start_c_str += 1;
 
         if (cursor_x >= WIDTH - HSTEP) {
             cursor_x = HSTEP;
             cursor_y += VSTEP;
         }
-
-        free(current_char);
     }
 }
 
