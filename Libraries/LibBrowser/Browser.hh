@@ -8,32 +8,12 @@
 #include "FontFamily.hh"
 #include "HtmlParser.hh"
 #include "HtmlToken.hh"
+#include "Layout.hh"
 #include "Url.hh"
 
 namespace LibBrowser {
 class Browser {
 public:
-    enum class FontStyle {
-        Normal,
-        Italic,
-    };
-    enum class FontWeight {
-        Normal,
-        Bold,
-    };
-    struct TextStyle {
-        FontStyle style;
-        FontWeight weight;
-    };
-    struct LayoutText {
-        Vector2 position;
-        std::string content;
-        TextStyle style;
-        // FIXIT: Use font reference if possible rather than copying font into
-        // the LayoutText
-        Font font;
-    };
-
     Browser();
     void load(URL const& url);
     void run();
@@ -52,7 +32,7 @@ private:
 
     HtmlParser* m_html_parser = nullptr;
     FontFamily m_font_family;
-    std::vector<LayoutText> m_display_list;
+    std::vector<Layout::Text> m_display_list;
     std::vector<HtmlToken> m_tokens;
     float m_scroll { 0.0f };
     float m_font_size { 13.0f };
