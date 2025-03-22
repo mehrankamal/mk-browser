@@ -4,7 +4,7 @@
 
 #include "UrlParser.hh"
 
-namespace MK {
+namespace LibBrowser {
 UrlParser::UrlParser(char* const url_str)
 {
     u32 len = strlen(url_str);
@@ -52,4 +52,4 @@ std::optional<URL> UrlParser::parse()
 
     return URL::create(scheme, host, port, path);
 }
-} // namespace MK
+} // namespace LibBrowser

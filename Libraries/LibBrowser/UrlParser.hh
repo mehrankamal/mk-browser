@@ -5,7 +5,7 @@
 #include "Forward.hh"
 #include "Url.hh"
 
-namespace MK {
+namespace LibBrowser {
 class UrlParser {
 public:
     UrlParser(char* const url_str);
@@ -16,4 +16,4 @@ private:
     u32 m_current;
     char* m_url_str;
 };
-} // namespace MK
+} // namespace LibBrowser

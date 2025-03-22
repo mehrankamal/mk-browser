@@ -14,7 +14,7 @@
 #include "Forward.hh"
 #include "Url.hh"
 
-namespace MK {
+namespace LibBrowser {
 
 std::optional<std::string> strip_headers(std::string const& response)
 {
@@ -183,4 +183,4 @@ std::optional<std::string> URL::request() const
         return std::optional<std::string>();
     }
 }
-} // namespace MK
+} // namespace LibBrowser

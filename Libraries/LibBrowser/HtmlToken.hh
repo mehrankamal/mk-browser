@@ -2,7 +2,7 @@
 
 #include <string>
 
-namespace MK {
+namespace LibBrowser {
 class HtmlToken {
 public:
     enum class Type { Tag, Text };

@@ -4,7 +4,7 @@
 #include <string>
 
 #include "Forward.hh"
-namespace MK {
+namespace LibBrowser {
 class URL {
 public:
     static URL create(std::string const scheme, std::string const host,
@@ -26,4 +26,4 @@ private:
     std::string m_path { "/" };
     u32 m_port;
 };
-} // namespace MK
+} // namespace LibBrowser

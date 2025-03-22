@@ -6,10 +6,10 @@
 int main(int argc, char** argv)
 {
     if (argc > 1) {
-        MK::UrlParser url_parser = MK::UrlParser(argv[1]);
+        LibBrowser::UrlParser url_parser = LibBrowser::UrlParser(argv[1]);
         auto maybe_url = url_parser.parse();
 
-        MK::Browser browser;
+        LibBrowser::Browser browser;
 
         if (maybe_url.has_value()) {
             browser.load(maybe_url.value());

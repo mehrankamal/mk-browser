@@ -5,7 +5,7 @@
 
 #include "HtmlToken.hh"
 
-namespace MK {
+namespace LibBrowser {
 class HtmlParser {
 public:
     HtmlParser(std::string const);

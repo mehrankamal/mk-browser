@@ -10,7 +10,7 @@
 #include "HtmlToken.hh"
 #include "Url.hh"
 
-namespace MK {
+namespace LibBrowser {
 class Browser {
 public:
     enum class FontStyle {
@@ -58,4 +58,4 @@ private:
     float m_font_size { 13.0f };
     float m_spacing { 0.0f };
 };
-} // namespace MK
+} // namespace LibBrowser

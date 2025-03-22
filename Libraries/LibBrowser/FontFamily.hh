@@ -4,7 +4,7 @@
 #include <raylib.h>
 #include <string>
 
-namespace MK {
+namespace LibBrowser {
 
 enum class FontVariant {
     Regular,

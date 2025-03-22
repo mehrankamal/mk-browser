@@ -14,7 +14,7 @@
 #define VSTEP 18.0f
 #define SCROLL_STEP 100u
 
-namespace MK {
+namespace LibBrowser {
 Browser::Browser()
 {
     InitWindow(WIDTH, HEIGHT, "MK Browser");
@@ -177,4 +177,4 @@ void Browser::update_draw_frame()
 }
 
 void Browser::close_window() const { CloseWindow(); }
-} // namespace MK
+} // namespace LibBrowser

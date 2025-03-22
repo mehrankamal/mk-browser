@@ -1,9 +1,9 @@
 #include "FontFamily.hh"
 #include "Types.hh"
 
-namespace MK {
+namespace LibBrowser {
 
-std::string to_string(MK::FontVariant const& variant)
+std::string to_string(LibBrowser::FontVariant const& variant)
 {
     switch (variant) {
     case FontVariant::Regular:
