@@ -24,13 +24,13 @@ void Browser::load(URL const& url)
 {
     auto maybe_body = url.request();
     m_html_parser = new HtmlParser(maybe_body.value_or(""));
-    m_tokens = html_parser().lex();
-    m_display_list = Layout(m_tokens).display_list();
+    auto tokens = html_parser().lex();
+    m_layout = new Layout(tokens);
 }
 
 void Browser::draw_layout() const
 {
-    for (auto const& layout_text : m_display_list) {
+    for (auto const& layout_text : layout().display_list()) {
         bool is_offscreen_content = layout_text.position.y + VSTEP < m_scroll
             || layout_text.position.y > m_scroll + HEIGHT;
 
@@ -38,8 +38,8 @@ void Browser::draw_layout() const
             continue;
 
         DrawTextEx(layout_text.font, layout_text.content.c_str(),
-            Vector2Add(layout_text.position, { 0, -m_scroll }), m_font_size,
-            m_spacing, BLACK);
+            Vector2Add(layout_text.position, { 0, -m_scroll }),
+            layout().font_size(), layout().spacing(), BLACK);
     }
 }
 

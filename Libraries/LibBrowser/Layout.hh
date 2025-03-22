@@ -34,6 +34,8 @@ public:
     Layout(std::vector<HtmlToken> const&);
     FontFamily const& font_family() const { return m_font_family; }
     std::vector<Text> display_list() const { return m_display_list; }
+    float font_size() const { return m_font_size; }
+    float spacing() const { return m_spacing; }
 
 private:
     void layout_content(std::vector<HtmlToken> const&);
