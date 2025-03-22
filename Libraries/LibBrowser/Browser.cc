@@ -8,25 +8,30 @@
 #include "Browser.hh"
 #include "Forward.hh"
 #include "HtmlParser.hh"
+#include "HtmlToken.hh"
 
 #define HSTEP 13.0f
 #define VSTEP 18.0f
 #define SCROLL_STEP 100u
+
+#define LAYOUT_DEBUG 1
 
 namespace MK {
 Browser::Browser()
 {
     InitWindow(WIDTH, HEIGHT, "MK Browser");
     SetTargetFPS(60);
-    m_font = LoadFont("resources/fonts/SF-Pro-Text-Regular.ttf");
+    load_font_family();
 }
+
+void Browser::load_font_family() { m_font_family.load_variants(); }
 
 void Browser::load(URL const& url)
 {
     auto maybe_body = url.request();
     m_html_parser = new HtmlParser(maybe_body.value_or(""));
-    m_text_content = html_parser().lex();
-    compute_layout(m_text_content);
+    m_tokens = html_parser().lex();
+    compute_layout();
 }
 
 static std::vector<std::string> split_to_chunks(std::string const& text_content)
@@ -52,29 +57,110 @@ static std::vector<std::string> split_to_chunks(std::string const& text_content)
     return chunks;
 }
 
-void Browser::compute_layout(std::string const& text_content)
+template<typename T> static T from_underlying(u32 value)
+{
+    return static_cast<T>(value);
+}
+
+static std::string to_string(Browser::FontVariant const& variant)
+{
+    switch (variant) {
+    case Browser::FontVariant::Regular:
+        return "Regular";
+    case Browser::FontVariant::Bold:
+        return "Bold";
+    case Browser::FontVariant::RegularItalic:
+        return "RegularItalic";
+    case Browser::FontVariant::BoldItalic:
+        return "BoldItalic";
+    }
+}
+
+void Browser::FontFamily::load_variants()
+{
+    for (auto variant = static_cast<u32>(FontVariant::Regular);
+        variant <= static_cast<u32>(FontVariant::BoldItalic); ++variant) {
+        std::string path = "Resources/Fonts/" + m_name + "-"
+            + to_string(from_underlying<FontVariant>(variant)) + ".ttf";
+        Font font = LoadFont(path.c_str());
+        m_variants.insert(
+            std::make_pair(from_underlying<FontVariant>(variant), font));
+    }
+}
+
+static Browser::FontVariant calculate_variant(
+    Browser::FontWeight const& weight, Browser::FontStyle const& style)
+{
+    if (weight == Browser::FontWeight::Normal
+        && style != Browser::FontStyle::Italic) {
+        return Browser::FontVariant::Regular;
+    } else if (weight == Browser::FontWeight::Bold
+        && style != Browser::FontStyle::Italic) {
+        return Browser::FontVariant::Bold;
+    } else if (weight == Browser::FontWeight::Normal
+        && style == Browser::FontStyle::Italic) {
+        return Browser::FontVariant::RegularItalic;
+    } else {
+        return Browser::FontVariant::BoldItalic;
+    }
+}
+
+void Browser::compute_layout()
 {
     auto cursor_x = HSTEP;
     auto cursor_y = VSTEP;
 
-    for (auto chunk : split_to_chunks(text_content)) {
-        assert(chunk.find(" ") == std::string::npos);
+    auto weight = FontWeight::Normal;
+    auto style = FontStyle::Normal;
 
-        auto width
-            = MeasureTextEx(m_font, chunk.c_str(), m_font_size, m_spacing).x;
+    for (auto token : tokens()) {
+        auto text_content = token.text_content();
+        auto font_variant = calculate_variant(weight, style);
+        auto current_font = font_family().variants().at(font_variant);
+#ifdef LAYOUT_DEBUG
+        std::cerr << "Getting font variant: " << to_string(font_variant)
+                  << std::endl;
+        std::cerr << "Token Text: " << text_content << std::endl;
+        std::cerr << "Token Type: " << static_cast<u32>(token.type())
+                  << std::endl;
+#endif
 
-        LayoutText layout_text = {
-            .position = { cursor_x, cursor_y },
-            .character = chunk,
-        };
+        if (token.type() == HtmlToken::Type::Text) {
+            for (auto chunk : split_to_chunks(text_content)) {
+                assert(chunk.find(" ") == std::string::npos);
 
-        m_display_list.push_back(layout_text);
-        cursor_x
-            += width + MeasureTextEx(m_font, " ", m_font_size, m_spacing).x;
+                auto width = MeasureTextEx(
+                    current_font, chunk.c_str(), m_font_size, m_spacing)
+                                 .x;
 
-        if (cursor_x + width >= WIDTH - HSTEP) {
-            cursor_x = HSTEP;
-            cursor_y += (m_font.baseSize + m_font.glyphPadding) * 1.25;
+                LayoutText layout_text = { .position = { cursor_x, cursor_y },
+                    .content = chunk,
+                    .style = { .style = style, .weight = weight },
+                    .font = current_font };
+
+                m_display_list.push_back(layout_text);
+                cursor_x += width
+                    + MeasureTextEx(current_font, " ", m_font_size, m_spacing)
+                          .x;
+
+                if (cursor_x + width >= WIDTH - HSTEP) {
+                    cursor_x = HSTEP;
+                    cursor_y
+                        += (current_font.baseSize + current_font.glyphPadding)
+                        * 1.25;
+                }
+            }
+        } else {
+
+            if (text_content == "i") {
+                style = FontStyle::Italic;
+            } else if (text_content == "/i") {
+                style = FontStyle::Normal;
+            } else if (text_content == "b") {
+                weight = FontWeight::Bold;
+            } else if (text_content == "/b") {
+                weight = FontWeight::Normal;
+            }
         }
     }
 }
@@ -88,7 +174,7 @@ void Browser::draw_layout() const
         if (is_offscreen_content)
             continue;
 
-        DrawTextEx(m_font, layout_text.character.c_str(),
+        DrawTextEx(layout_text.font, layout_text.content.c_str(),
             Vector2Add(layout_text.position, { 0, -m_scroll }), m_font_size,
             m_spacing, BLACK);
     }

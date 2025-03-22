@@ -1,7 +1,9 @@
+#include <iostream>
 #include <sstream>
 #include <string>
 
 #include "HtmlParser.hh"
+#include "HtmlToken.hh"
 
 namespace MK {
 
@@ -10,20 +12,41 @@ HtmlParser::HtmlParser(std::string const text)
 {
 }
 
-std::string HtmlParser::lex()
+std::vector<HtmlToken> HtmlParser::lex()
 {
-    std::stringstream text_contetnt;
+    std::vector<HtmlToken> tokens;
+    std::stringstream text_buffer;
     auto in_tag = false;
+#ifdef HTML_PARSER_DEBUG
+    std::cerr << "[HtmlParser] Parser Text: " << m_text << std::endl;
+#endif
     for (auto const c : m_text) {
-        if (c == '<')
+        if (c == '<') {
             in_tag = true;
-        else if (c == '>')
+            auto text_content = text_buffer.str();
+            if (!text_content.empty()) {
+                auto token = HtmlToken(HtmlToken::Type::Text, text_content);
+                tokens.push_back(token);
+            }
+            text_buffer.str("");
+        } else if (c == '>') {
             in_tag = false;
-        else if (!in_tag)
-            text_contetnt << c;
+            auto text_content = text_buffer.str();
+            tokens.push_back(HtmlToken(HtmlToken::Type::Tag, text_content));
+            text_buffer.str("");
+        } else {
+            text_buffer << c;
+        }
     }
 
-    return text_contetnt.str();
+    auto text_content = text_buffer.str();
+    if (!in_tag && !text_content.empty()) {
+        tokens.push_back(HtmlToken(HtmlToken::Type::Text, text_content));
+    }
+
+    std::cerr << "Parsed no. of tokens: " << tokens.size() << std::endl;
+
+    return tokens;
 }
 
 }
