@@ -7,6 +7,12 @@
 
 namespace LibBrowser {
 
+Layout::Layout(std::vector<HtmlToken> const& tokens)
+{
+    m_font_family.load_variants();
+    layout_content(tokens);
+}
+
 static std::vector<std::string> split_to_chunks(std::string const& text_content)
 {
     std::vector<std::string> chunks;
@@ -47,10 +53,8 @@ static FontVariant calculate_variant(
     }
 }
 
-Layout::Layout(std::vector<HtmlToken> const& tokens)
+void Layout::layout_content(std::vector<HtmlToken> const& tokens)
 {
-    m_font_family.load_variants();
-
     auto cursor_x = HSTEP;
     auto cursor_y = VSTEP;
 

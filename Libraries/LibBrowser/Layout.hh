@@ -35,6 +35,8 @@ public:
     std::vector<Text> display_list() const { return m_display_list; }
 
 private:
+    void layout_content(std::vector<HtmlToken> const&);
+
     std::vector<Text> m_display_list {};
     FontFamily m_font_family;
     float m_font_size { 13.0f };
