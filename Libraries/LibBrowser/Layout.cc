@@ -1,6 +1,5 @@
 #include <cassert>
 
-#include "Config.hh"
 #include "FontFamily.hh"
 #include "HtmlToken.hh"
 #include "Layout.hh"
@@ -37,16 +36,16 @@ static std::vector<std::string> split_to_chunks(std::string const& text_content)
 }
 
 static FontVariant calculate_variant(
-    Layout::FontWeight const& weight, Layout::FontStyle const& style)
+    Layout::FontWeight const& m_weight, Layout::FontStyle const& m_style)
 {
-    if (weight == Layout::FontWeight::Normal
-        && style != Layout::FontStyle::Italic) {
+    if (m_weight == Layout::FontWeight::Normal
+        && m_style != Layout::FontStyle::Italic) {
         return FontVariant::Regular;
-    } else if (weight == Layout::FontWeight::Bold
-        && style != Layout::FontStyle::Italic) {
+    } else if (m_weight == Layout::FontWeight::Bold
+        && m_style != Layout::FontStyle::Italic) {
         return FontVariant::Bold;
-    } else if (weight == Layout::FontWeight::Normal
-        && style == Layout::FontStyle::Italic) {
+    } else if (m_weight == Layout::FontWeight::Normal
+        && m_style == Layout::FontStyle::Italic) {
         return FontVariant::RegularItalic;
     } else {
         return FontVariant::BoldItalic;
@@ -55,15 +54,10 @@ static FontVariant calculate_variant(
 
 void Layout::layout_content(std::vector<HtmlToken> const& tokens)
 {
-    auto cursor_x = HSTEP;
-    auto cursor_y = VSTEP;
-
-    auto weight = Layout::FontWeight::Normal;
-    auto style = Layout::FontStyle::Normal;
 
     for (auto token : tokens) {
         auto text_content = token.text_content();
-        auto font_variant = calculate_variant(weight, style);
+        auto font_variant = calculate_variant(m_weight, m_style);
         auto current_font = font_family().variants().at(font_variant);
 #ifdef LAYOUT_DEBUG
         std::cerr << "Getting font variant: " << to_string(font_variant)
@@ -82,19 +76,19 @@ void Layout::layout_content(std::vector<HtmlToken> const& tokens)
                                  .x;
 
                 auto layout_text
-                    = Layout::Text { .position = { cursor_x, cursor_y },
+                    = Layout::Text { .position = { m_cursor_x, m_cursor_y },
                           .content = chunk,
-                          .style = { .style = style, .weight = weight },
+                          .style = { .style = m_style, .weight = m_weight },
                           .font = current_font };
 
                 m_display_list.push_back(layout_text);
-                cursor_x += width
+                m_cursor_x += width
                     + MeasureTextEx(current_font, " ", m_font_size, m_spacing)
                           .x;
 
-                if (cursor_x + width >= WIDTH - HSTEP) {
-                    cursor_x = HSTEP;
-                    cursor_y
+                if (m_cursor_x + width >= WIDTH - HSTEP) {
+                    m_cursor_x = HSTEP;
+                    m_cursor_y
                         += (current_font.baseSize + current_font.glyphPadding)
                         * 1.25;
                 }
@@ -102,13 +96,13 @@ void Layout::layout_content(std::vector<HtmlToken> const& tokens)
         } else {
 
             if (text_content == "i") {
-                style = Layout::FontStyle::Italic;
+                m_style = Layout::FontStyle::Italic;
             } else if (text_content == "/i") {
-                style = Layout::FontStyle::Normal;
+                m_style = Layout::FontStyle::Normal;
             } else if (text_content == "b") {
-                weight = Layout::FontWeight::Bold;
+                m_weight = Layout::FontWeight::Bold;
             } else if (text_content == "/b") {
-                weight = Layout::FontWeight::Normal;
+                m_weight = Layout::FontWeight::Normal;
             }
         }
     }

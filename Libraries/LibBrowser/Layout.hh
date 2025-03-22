@@ -3,6 +3,7 @@
 #include <raylib.h>
 #include <vector>
 
+#include "Config.hh"
 #include "FontFamily.hh"
 #include "HtmlToken.hh"
 
@@ -41,5 +42,9 @@ private:
     FontFamily m_font_family;
     float m_font_size { 13.0f };
     float m_spacing { 0.0f };
+    float m_cursor_x { HSTEP };
+    float m_cursor_y = { VSTEP };
+    FontWeight m_weight = FontWeight::Normal;
+    FontStyle m_style = FontStyle::Normal;
 };
 }
