@@ -18,6 +18,8 @@ Browser::Browser()
     SetTargetFPS(60);
 }
 
+Browser::~Browser() { delete m_html_parser; }
+
 void Browser::load(URL const& url)
 {
     auto maybe_body = url.request();

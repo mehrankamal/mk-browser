@@ -15,6 +15,8 @@ namespace LibBrowser {
 class Browser {
 public:
     Browser();
+    ~Browser();
+
     void load(URL const& url);
     void run();
 
