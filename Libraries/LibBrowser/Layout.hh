@@ -37,6 +37,7 @@ public:
 
 private:
     void layout_content(std::vector<HtmlToken> const&);
+    void layout_text(std::string const&);
 
     std::vector<Text> m_display_list {};
     FontFamily m_font_family;
