@@ -14,6 +14,8 @@
 #include "Forward.hh"
 #include "Url.hh"
 
+#define URL_DEBUG 0
+
 namespace MK {
 
 std::optional<std::string> strip_headers(std::string const& response)
@@ -71,8 +73,12 @@ std::optional<std::string> URL::request_http() const
         return std::optional<std::string>();
     }
 
-    std::string request
-        = "GET / HTTP/1.1\r\nHost: " + m_host + "\r\nConnection: close\r\n\r\n";
+#ifdef URL_DEBUG
+    std::cout << "Requesting Path: " + m_path << std::endl;
+#endif
+
+    std::string request = "GET " + m_path + " HTTP/1.1\r\nHost: " + m_host
+        + "\r\nConnection: close\r\n\r\n";
 
     if (send(sock, request.c_str(), request.length(), 0) == -1) {
         std::cerr << "Failed to send request" << std::endl;
@@ -94,6 +100,12 @@ std::optional<std::string> URL::request_http() const
     }
 
     close(sock);
+
+#ifdef URL_DEBUG
+    std::cerr << "----------Response from request----------" << std::endl
+              << response << std::endl
+              << "-----------------------------------------" << std::endl;
+#endif
 
     return strip_headers(response);
 }

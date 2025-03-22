@@ -23,7 +23,7 @@ private:
 
     std::string m_scheme;
     std::string m_host;
-    std::string m_path;
+    std::string m_path { "/" };
     u32 m_port;
 };
 } // namespace MK
