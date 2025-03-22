@@ -14,8 +14,6 @@
 #define VSTEP 18.0f
 #define SCROLL_STEP 100u
 
-#define LAYOUT_DEBUG 1
-
 namespace MK {
 Browser::Browser()
 {

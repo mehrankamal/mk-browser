@@ -14,8 +14,6 @@
 #include "Forward.hh"
 #include "Url.hh"
 
-#define URL_DEBUG 0
-
 namespace MK {
 
 std::optional<std::string> strip_headers(std::string const& response)
