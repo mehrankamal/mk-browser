@@ -57,51 +57,20 @@ static std::vector<std::string> split_to_chunks(std::string const& text_content)
     return chunks;
 }
 
-template<typename T> static T from_underlying(u32 value)
-{
-    return static_cast<T>(value);
-}
-
-static std::string to_string(Browser::FontVariant const& variant)
-{
-    switch (variant) {
-    case Browser::FontVariant::Regular:
-        return "Regular";
-    case Browser::FontVariant::Bold:
-        return "Bold";
-    case Browser::FontVariant::RegularItalic:
-        return "RegularItalic";
-    case Browser::FontVariant::BoldItalic:
-        return "BoldItalic";
-    }
-}
-
-void Browser::FontFamily::load_variants()
-{
-    for (auto variant = static_cast<u32>(FontVariant::Regular);
-        variant <= static_cast<u32>(FontVariant::BoldItalic); ++variant) {
-        std::string path = "Resources/Fonts/" + m_name + "-"
-            + to_string(from_underlying<FontVariant>(variant)) + ".ttf";
-        Font font = LoadFont(path.c_str());
-        m_variants.insert(
-            std::make_pair(from_underlying<FontVariant>(variant), font));
-    }
-}
-
-static Browser::FontVariant calculate_variant(
+static FontVariant calculate_variant(
     Browser::FontWeight const& weight, Browser::FontStyle const& style)
 {
     if (weight == Browser::FontWeight::Normal
         && style != Browser::FontStyle::Italic) {
-        return Browser::FontVariant::Regular;
+        return FontVariant::Regular;
     } else if (weight == Browser::FontWeight::Bold
         && style != Browser::FontStyle::Italic) {
-        return Browser::FontVariant::Bold;
+        return FontVariant::Bold;
     } else if (weight == Browser::FontWeight::Normal
         && style == Browser::FontStyle::Italic) {
-        return Browser::FontVariant::RegularItalic;
+        return FontVariant::RegularItalic;
     } else {
-        return Browser::FontVariant::BoldItalic;
+        return FontVariant::BoldItalic;
     }
 }
 

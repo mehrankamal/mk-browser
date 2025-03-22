@@ -5,6 +5,7 @@
 #include <raylib.h>
 #include <vector>
 
+#include "FontFamily.hh"
 #include "HtmlParser.hh"
 #include "HtmlToken.hh"
 #include "Url.hh"
@@ -31,28 +32,6 @@ public:
         // FIXIT: Use font reference if possible rather than copying font into
         // the LayoutText
         Font font;
-    };
-
-    enum class FontVariant {
-        Regular,
-        Bold,
-        RegularItalic,
-        BoldItalic,
-    };
-
-    class FontFamily {
-    public:
-        void load_variants();
-
-        std::string const& name() const { return m_name; }
-        std::map<FontVariant, Font> const& variants() const
-        {
-            return m_variants;
-        }
-
-    private:
-        std::string m_name { "SF-Pro-Text" };
-        std::map<FontVariant, Font> m_variants;
     };
 
     Browser();

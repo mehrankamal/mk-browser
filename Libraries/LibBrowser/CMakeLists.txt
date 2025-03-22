@@ -1,9 +1,10 @@
 add_library(LibBrowser STATIC
-    UrlParser.cc
+    Browser.cc
+    FontFamily.cc
     HtmlParser.cc
     HtmlToken.cc
     Url.cc
-    Browser.cc
+    UrlParser.cc
 )
 
 target_include_directories(LibBrowser PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
