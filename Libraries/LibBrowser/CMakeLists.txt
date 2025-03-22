@@ -3,6 +3,7 @@ add_library(LibBrowser STATIC
     FontFamily.cc
     HtmlParser.cc
     HtmlToken.cc
+    Layout.cc
     Url.cc
     UrlParser.cc
 )

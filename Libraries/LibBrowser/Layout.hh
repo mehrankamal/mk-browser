@@ -3,6 +3,9 @@
 #include <raylib.h>
 #include <vector>
 
+#include "FontFamily.hh"
+#include "HtmlToken.hh"
+
 namespace LibBrowser {
 class Layout {
 public:
@@ -27,6 +30,14 @@ public:
         Font font;
     };
 
+    Layout(std::vector<HtmlToken> const&);
+    FontFamily const& font_family() const { return m_font_family; }
+    std::vector<Text> display_list() const { return m_display_list; }
+
 private:
+    std::vector<Text> m_display_list {};
+    FontFamily m_font_family;
+    float m_font_size { 13.0f };
+    float m_spacing { 0.0f };
 };
 }
