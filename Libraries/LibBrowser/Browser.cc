@@ -38,7 +38,7 @@ void Browser::draw_layout() const
 
         DrawTextEx(layout_text.font, layout_text.content.c_str(),
             Vector2Add(layout_text.position, { 0, -m_scroll }),
-            layout().font_size(), layout().spacing(), BLACK);
+            layout_text.size, layout().spacing(), BLACK);
     }
 }
 

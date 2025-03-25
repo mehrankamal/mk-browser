@@ -63,11 +63,11 @@ void Layout::layout_text(std::string const& text)
             = MeasureTextEx(current_font, chunk.c_str(), m_font_size, m_spacing)
                   .x;
 
-        auto layout_text
-            = Layout::Text { .position = { m_cursor_x, m_cursor_y },
-                  .content = chunk,
-                  .style = { .style = m_style, .weight = m_weight },
-                  .font = current_font };
+        auto layout_text = Text { .position = { m_cursor_x, m_cursor_y },
+            .content = chunk,
+            .style = { .style = m_style, .weight = m_weight },
+            .font = current_font,
+            .size = m_font_size };
 
         m_display_list.push_back(layout_text);
         m_cursor_x += width
@@ -91,13 +91,21 @@ void Layout::layout_content(std::vector<HtmlToken> const& tokens)
             layout_text(text_content);
         } else {
             if (text_content == "i") {
-                m_style = Layout::FontStyle::Italic;
+                m_style = FontStyle::Italic;
             } else if (text_content == "/i") {
-                m_style = Layout::FontStyle::Normal;
+                m_style = FontStyle::Normal;
             } else if (text_content == "b") {
-                m_weight = Layout::FontWeight::Bold;
+                m_weight = FontWeight::Bold;
             } else if (text_content == "/b") {
-                m_weight = Layout::FontWeight::Normal;
+                m_weight = FontWeight::Normal;
+            } else if (text_content == "small") {
+                m_font_size -= 2;
+            } else if (text_content == "/small") {
+                m_font_size += 2;
+            } else if (text_content == "big") {
+                m_font_size += 4;
+            } else if (text_content == "/big") {
+                m_font_size -= 4;
             }
         }
     }

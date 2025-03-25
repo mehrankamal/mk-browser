@@ -44,7 +44,9 @@ std::vector<HtmlToken> HtmlParser::lex()
         tokens.push_back(HtmlToken(HtmlToken::Type::Text, text_content));
     }
 
+#ifdef HTML_PARSER_DEBUG
     std::cerr << "Parsed no. of tokens: " << tokens.size() << std::endl;
+#endif
 
     return tokens;
 }

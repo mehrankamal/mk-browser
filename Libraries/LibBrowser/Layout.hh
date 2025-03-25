@@ -29,6 +29,7 @@ public:
         // FIXIT: Use font reference if possible rather than copying font into
         // the LayoutText
         Font font;
+        float size;
     };
 
     Layout(std::vector<HtmlToken> const&);
