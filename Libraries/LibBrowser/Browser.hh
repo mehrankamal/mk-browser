@@ -3,6 +3,7 @@
 #include <cassert>
 #include <cstddef>
 #include <map>
+#include <memory>
 #include <raylib.h>
 #include <vector>
 
@@ -16,7 +17,6 @@ namespace LibBrowser {
 class Browser {
 public:
     Browser();
-    ~Browser();
 
     void load(URL const& url);
     void run();
@@ -38,8 +38,8 @@ private:
     void draw_layout() const;
     void update_state();
 
-    HtmlParser* m_html_parser = nullptr;
-    Layout* m_layout = nullptr;
+    std::unique_ptr<HtmlParser> m_html_parser = nullptr;
+    std::unique_ptr<Layout> m_layout = nullptr;
     float m_scroll { 0.0f };
 };
 } // namespace LibBrowser

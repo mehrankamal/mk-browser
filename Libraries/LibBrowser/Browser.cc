@@ -1,4 +1,5 @@
 #include <iostream>
+#include <memory>
 #include <raylib.h>
 #include <raymath.h>
 #include <string>
@@ -18,14 +19,12 @@ Browser::Browser()
     SetTargetFPS(60);
 }
 
-Browser::~Browser() { delete m_html_parser; }
-
 void Browser::load(URL const& url)
 {
     auto maybe_body = url.request();
-    m_html_parser = new HtmlParser(maybe_body.value_or(""));
+    m_html_parser = std::make_unique<HtmlParser>(maybe_body.value_or(""));
     auto tokens = html_parser().lex();
-    m_layout = new Layout(tokens);
+    m_layout = std::make_unique<Layout>(tokens);
 }
 
 void Browser::draw_layout() const
