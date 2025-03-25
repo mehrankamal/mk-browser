@@ -142,6 +142,13 @@ void Layout::layout_content(std::vector<HtmlToken> const& tokens)
                 m_font_size += 4;
             } else if (text_content == "/big") {
                 m_font_size -= 4;
+                // FIXIT: Implement <br /> tag correctly, the standards are to
+                // use <br> without the closing tag
+            } else if (text_content == "br /") {
+                flush();
+            } else if (text_content == "/p") {
+                flush();
+                m_cursor_y += VSTEP;
             }
         }
     }
