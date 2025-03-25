@@ -41,8 +41,10 @@ public:
 private:
     void layout_content(std::vector<HtmlToken> const&);
     void layout_text(std::string const&);
+    void flush();
 
     std::vector<Text> m_display_list {};
+    std::vector<Text> m_line {};
     FontFamily m_font_family;
     float m_font_size { 13.0f };
     float m_spacing { 0.0f };

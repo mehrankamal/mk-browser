@@ -1,5 +1,6 @@
 #include <cassert>
 
+#include "Config.hh"
 #include "FontFamily.hh"
 #include "HtmlToken.hh"
 #include "Layout.hh"
@@ -10,6 +11,7 @@ Layout::Layout(std::vector<HtmlToken> const& tokens)
 {
     m_font_family.load_variants();
     layout_content(tokens);
+    flush();
 }
 
 static std::vector<std::string> split_to_chunks(std::string const& text_content)
@@ -52,6 +54,42 @@ static FontVariant calculate_variant(
     }
 }
 
+void Layout::flush()
+{
+    if (m_line.empty()) {
+        return;
+    }
+
+    auto text_measures = std::vector<Vector2>();
+    for (auto const& text : m_line) {
+        auto text_measure = MeasureTextEx(
+            text.font, text.content.c_str(), text.size, m_spacing);
+        text_measures.push_back(text_measure);
+    }
+
+    float max_ascent = 0.0f;
+    for (auto const& measure : text_measures) {
+        max_ascent = std::max(max_ascent, -measure.y);
+    }
+
+    auto baseline = m_cursor_y + 1.25 * max_ascent;
+
+    for (auto i = 0; i < m_line.size(); ++i) {
+        m_line[i].position.y = baseline - text_measures[i].y;
+        m_display_list.push_back(m_line[i]);
+    }
+
+    float max_descent = 0.0f;
+    for (auto const& measure : text_measures) {
+        max_descent = std::max(max_descent, measure.y);
+    }
+
+    m_cursor_y = baseline + 1.25 * max_descent;
+
+    m_cursor_x = HSTEP;
+    m_line.clear();
+}
+
 void Layout::layout_text(std::string const& text)
 {
     auto font_variant = calculate_variant(m_weight, m_style);
@@ -63,21 +101,19 @@ void Layout::layout_text(std::string const& text)
             = MeasureTextEx(current_font, chunk.c_str(), m_font_size, m_spacing)
                   .x;
 
-        auto layout_text = Text { .position = { m_cursor_x, m_cursor_y },
+        if (m_cursor_x + width > WIDTH - HSTEP) {
+            flush();
+        }
+
+        auto layout_text = Text { .position = { m_cursor_x, 0 },
             .content = chunk,
             .style = { .style = m_style, .weight = m_weight },
             .font = current_font,
             .size = m_font_size };
 
-        m_display_list.push_back(layout_text);
+        m_line.push_back(layout_text);
         m_cursor_x += width
             + MeasureTextEx(current_font, " ", m_font_size, m_spacing).x;
-
-        if (m_cursor_x + width >= WIDTH - HSTEP) {
-            m_cursor_x = HSTEP;
-            m_cursor_y
-                += (current_font.baseSize + current_font.glyphPadding) * 1.25;
-        }
     }
 }
 
