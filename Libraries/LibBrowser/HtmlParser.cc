@@ -1,4 +1,6 @@
+#include <algorithm>
 #include <cassert>
+#include <cctype>
 #include <iostream>
 #include <sstream>
 #include <string>
@@ -29,6 +31,9 @@ void HtmlParser::parse_text(std::string const& text)
 #ifdef HTML_PARSER_DEBUG
     std::cerr << "[HtmlParser] Parsing text: " << text << std::endl;
 #endif
+    if (std::all_of(text.begin(), text.end(), isspace)) {
+        return;
+    }
     assert(!m_unfinished.empty());
     auto parent = m_unfinished.back();
     auto node = new HtmlNode(HtmlNode::Type::Text, text, parent);
@@ -55,11 +60,6 @@ void HtmlParser::parse_tag(std::string const& tag)
     }
 }
 
-static bool is_whitespace(char const c)
-{
-    return c == ' ' || c == '\n' || c == '\t';
-}
-
 HtmlNode* HtmlParser::parse()
 {
     std::vector<HtmlNode> tokens;
@@ -69,9 +69,7 @@ HtmlNode* HtmlParser::parse()
     std::cerr << "[HtmlParser] Parser Text: " << m_text << std::endl;
 #endif
     for (auto const c : m_text) {
-        if (is_whitespace(c)) {
-            continue;
-        } else if (c == '<') {
+        if (c == '<') {
             in_tag = true;
             if (!text_content.empty()) {
                 parse_text(text_content);
