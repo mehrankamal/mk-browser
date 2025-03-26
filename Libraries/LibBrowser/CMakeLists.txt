@@ -4,6 +4,7 @@ add_library(LibBrowser STATIC
     HtmlParser.cc
     HtmlNode.cc
     Layout.cc
+    String.cc
     Url.cc
     UrlParser.cc
 )
