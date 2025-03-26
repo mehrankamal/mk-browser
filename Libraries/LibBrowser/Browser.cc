@@ -8,8 +8,8 @@
 #include "Browser.hh"
 #include "Config.hh"
 #include "Forward.hh"
+#include "HtmlNode.hh"
 #include "HtmlParser.hh"
-#include "HtmlToken.hh"
 #include "Layout.hh"
 
 namespace LibBrowser {
@@ -23,8 +23,9 @@ void Browser::load(URL const& url)
 {
     auto maybe_body = url.request();
     m_html_parser = std::make_unique<HtmlParser>(maybe_body.value_or(""));
-    auto tokens = html_parser().lex();
-    m_layout = std::make_unique<Layout>(tokens);
+    auto tokens = html_parser().parse();
+    std::cerr << tokens->to_string();
+    m_layout = std::make_unique<Layout>(std::vector<HtmlNode>());
 }
 
 void Browser::draw_layout() const

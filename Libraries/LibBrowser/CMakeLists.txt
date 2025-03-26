@@ -2,7 +2,7 @@ add_library(LibBrowser STATIC
     Browser.cc
     FontFamily.cc
     HtmlParser.cc
-    HtmlToken.cc
+    HtmlNode.cc
     Layout.cc
     Url.cc
     UrlParser.cc

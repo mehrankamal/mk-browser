@@ -8,8 +8,8 @@
 #include <vector>
 
 #include "FontFamily.hh"
+#include "HtmlNode.hh"
 #include "HtmlParser.hh"
-#include "HtmlToken.hh"
 #include "Layout.hh"
 #include "Url.hh"
 

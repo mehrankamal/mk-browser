@@ -2,12 +2,12 @@
 
 #include "Config.hh"
 #include "FontFamily.hh"
-#include "HtmlToken.hh"
+#include "HtmlNode.hh"
 #include "Layout.hh"
 
 namespace LibBrowser {
 
-Layout::Layout(std::vector<HtmlToken> const& tokens)
+Layout::Layout(std::vector<HtmlNode> const& tokens)
 {
     m_font_family.load_variants();
     layout_content(tokens);
@@ -117,13 +117,13 @@ void Layout::layout_text(std::string const& text)
     }
 }
 
-void Layout::layout_content(std::vector<HtmlToken> const& tokens)
+void Layout::layout_content(std::vector<HtmlNode> const& tokens)
 {
 
     for (auto token : tokens) {
         auto text_content = token.text_content();
 
-        if (token.type() == HtmlToken::Type::Text) {
+        if (token.type() == HtmlNode::Type::Text) {
             layout_text(text_content);
         } else {
             if (text_content == "i") {

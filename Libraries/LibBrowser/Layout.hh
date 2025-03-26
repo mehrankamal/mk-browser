@@ -5,7 +5,7 @@
 
 #include "Config.hh"
 #include "FontFamily.hh"
-#include "HtmlToken.hh"
+#include "HtmlNode.hh"
 
 namespace LibBrowser {
 class Layout {
@@ -32,14 +32,14 @@ public:
         float size;
     };
 
-    Layout(std::vector<HtmlToken> const&);
+    Layout(std::vector<HtmlNode> const&);
     FontFamily const& font_family() const { return m_font_family; }
     std::vector<Text> display_list() const { return m_display_list; }
     float font_size() const { return m_font_size; }
     float spacing() const { return m_spacing; }
 
 private:
-    void layout_content(std::vector<HtmlToken> const&);
+    void layout_content(std::vector<HtmlNode> const&);
     void layout_text(std::string const&);
     void flush();
 
