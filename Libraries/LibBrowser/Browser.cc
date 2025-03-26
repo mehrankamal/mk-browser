@@ -23,9 +23,8 @@ void Browser::load(URL const& url)
 {
     auto maybe_body = url.request();
     m_html_parser = std::make_unique<HtmlParser>(maybe_body.value_or(""));
-    auto tokens = html_parser().parse();
-    std::cerr << tokens->to_string();
-    m_layout = std::make_unique<Layout>(std::vector<HtmlNode>());
+    auto tree = html_parser().parse();
+    m_layout = std::make_unique<Layout>(tree);
 }
 
 void Browser::draw_layout() const

@@ -27,7 +27,9 @@ public:
         std::map<std::string, std::string> attributes = {});
 
     std::string const& text_content() { return m_text_content; }
-    Type const& type() { return m_type; }
+    Type const& type() const { return m_type; }
+    std::vector<HtmlNode*> children() const { return m_children; }
+
     void add_child(HtmlNode* child) { m_children.push_back(child); }
 
     std::string to_string(u32 ident = 0) const;

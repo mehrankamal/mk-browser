@@ -32,16 +32,19 @@ public:
         float size;
     };
 
-    Layout(std::vector<HtmlNode> const&);
+    Layout(HtmlNode*);
     FontFamily const& font_family() const { return m_font_family; }
     std::vector<Text> display_list() const { return m_display_list; }
     float font_size() const { return m_font_size; }
     float spacing() const { return m_spacing; }
 
 private:
-    void layout_content(std::vector<HtmlNode> const&);
+    void layout_content(HtmlNode*);
     void layout_text(std::string const&);
     void flush();
+
+    void open_tag(std::string const&);
+    void close_tag(std::string const&);
 
     std::vector<Text> m_display_list {};
     std::vector<Text> m_line {};

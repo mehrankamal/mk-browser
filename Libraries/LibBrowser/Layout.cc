@@ -8,10 +8,10 @@
 
 namespace LibBrowser {
 
-Layout::Layout(std::vector<HtmlNode> const& tokens)
+Layout::Layout(HtmlNode* root)
 {
     m_font_family.load_variants();
-    layout_content(tokens);
+    layout_content(root);
     flush();
 }
 
@@ -95,39 +95,53 @@ void Layout::layout_text(std::string const& text)
     }
 }
 
-void Layout::layout_content(std::vector<HtmlNode> const& tokens)
+void Layout::open_tag(std::string const& tag_name)
+{
+    if (tag_name == "i") {
+        m_style = FontStyle::Italic;
+    } else if (tag_name == "b") {
+        m_weight = FontWeight::Bold;
+    } else if (tag_name == "small") {
+        m_font_size -= 2;
+    } else if (tag_name == "big") {
+        m_font_size += 4;
+    }
+}
+
+void Layout::close_tag(std::string const& tag_name)
+{
+    if (tag_name == "/i") {
+        m_style = FontStyle::Normal;
+    } else if (tag_name == "/b") {
+        m_weight = FontWeight::Normal;
+    } else if (tag_name == "/small") {
+        m_font_size += 2;
+    } else if (tag_name == "/big") {
+        m_font_size -= 4;
+        // FIXIT: Implement <br /> tag correctly, the standards are
+        // to use <br> without the closing tag
+    } else if (tag_name == "br /") {
+        flush();
+    } else if (tag_name == "/p") {
+        flush();
+        m_cursor_y += VSTEP;
+    }
+}
+
+void Layout::layout_content(HtmlNode* root)
 {
 
-    for (auto token : tokens) {
-        auto text_content = token.text_content();
+    if (root) {
+        auto text_content = root->text_content();
 
-        if (token.type() == HtmlNode::Type::Text) {
+        if (root->type() == HtmlNode::Type::Text) {
             layout_text(text_content);
         } else {
-            if (text_content == "i") {
-                m_style = FontStyle::Italic;
-            } else if (text_content == "/i") {
-                m_style = FontStyle::Normal;
-            } else if (text_content == "b") {
-                m_weight = FontWeight::Bold;
-            } else if (text_content == "/b") {
-                m_weight = FontWeight::Normal;
-            } else if (text_content == "small") {
-                m_font_size -= 2;
-            } else if (text_content == "/small") {
-                m_font_size += 2;
-            } else if (text_content == "big") {
-                m_font_size += 4;
-            } else if (text_content == "/big") {
-                m_font_size -= 4;
-                // FIXIT: Implement <br /> tag correctly, the standards are to
-                // use <br> without the closing tag
-            } else if (text_content == "br /") {
-                flush();
-            } else if (text_content == "/p") {
-                flush();
-                m_cursor_y += VSTEP;
+            open_tag(text_content);
+            for (auto child : root->children()) {
+                layout_content(child);
             }
+            close_tag(text_content);
         }
     }
 }
