@@ -4,10 +4,12 @@
 #include "HtmlNode.hh"
 
 namespace LibBrowser {
-HtmlNode::HtmlNode(Type const& type, std::string text_content, HtmlNode* parent)
+HtmlNode::HtmlNode(Type const& type, std::string text_content, HtmlNode* parent,
+    std::map<std::string, std::string> attributes)
     : m_type(type)
     , m_text_content(text_content)
     , m_parent(parent)
+    , m_attributes(attributes)
 {
 }
 

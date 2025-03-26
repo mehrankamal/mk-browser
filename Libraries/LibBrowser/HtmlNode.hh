@@ -1,6 +1,7 @@
 #pragma once
 
 #include <iostream>
+#include <map>
 #include <memory>
 #include <string>
 #include <vector>
@@ -22,7 +23,8 @@ public:
         }
     }
 
-    HtmlNode(Type const&, std::string, HtmlNode* parent = nullptr);
+    HtmlNode(Type const&, std::string, HtmlNode* parent = nullptr,
+        std::map<std::string, std::string> attributes = {});
 
     std::string const& text_content() { return m_text_content; }
     Type const& type() { return m_type; }
@@ -35,5 +37,6 @@ private:
     std::string m_text_content { "" };
     HtmlNode* m_parent { nullptr };
     std::vector<HtmlNode*> m_children {};
+    std::map<std::string, std::string> m_attributes {};
 };
 }
